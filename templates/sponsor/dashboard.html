@@ -1,11 +1,46 @@
 <!doctype html>
 <html>
-  <head><meta charset="utf-8"><title>Sponsor Dashboard</title></head>
+  <head>
+    <meta charset="utf-8">
+    <title>Sponsor Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
   <body style="font-family: system-ui; margin:2rem;">
-    <h2>Sponsor Dashboard (placeholder)</h2>
-    <p>TODO: manage drivers, points, catalog…</p>
-    <p><a href="{{ url_for('sponsor_bp.add_user')}}">Add a New Driver</a></p>
-    
+    <h2>Sponsor Dashboard</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-messages {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="box" style="margin-bottom: 2rem;">
+        <h3>Driver Management</h3>
+        <p>Use the link below to create new accounts for your drivers.</p>
+        <a href="{{ url_for('sponsor_bp.add_user') }}">Add a New Driver</a>
+    </div>
+
+    <div class="box">
+        <h3>Current Store Settings</h3>
+        <p><strong>eBay Category ID:</strong> {{ settings.ebay_category_id }}</p>
+        <p><strong>Points per Dollar:</strong> {{ settings.point_ratio }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('sponsor_bp.update_settings') }}" style="margin-top: 2rem;">
+        <h3>Update Store Settings</h3>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="ebay_category_id">eBay Category ID:</label>
+        <input type="text" id="ebay_category_id" name="ebay_category_id" value="{{ settings.ebay_category_id }}" required>
+        
+        <label for="point_ratio">Points per Dollar:</label>
+        <input type="number" id="point_ratio" name="point_ratio" value="{{ settings.point_ratio }}" required>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+
     <a href="{{ url_for('auth.logout') }}">Logout</a>
     <p><a href="/">Back</a></p>
   </body>
